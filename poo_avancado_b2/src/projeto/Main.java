@@ -2,30 +2,14 @@ package projeto;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Locale;
+import java.util.Scanner;
 
 public class Main {
 
-	static void salvar(ArrayList<Livro> livros) throws IOException {
-
-		FileWriter writer = new FileWriter("livros.txt");
-
-		for (Livro livro : livros) {
-			String linha = livro.getTitulo() + ";" 
-						+ livro.getGenero() + ";"
-						+ livro.getAutor() + ";"
-						+ livro.getAno() + ";" 
-						+ livro.getEdicao();
-
-			writer.write(linha + "\n");
-		}
-		writer.close();
-		
-		System.out.println("Livro registrado");
-		System.out.println("Quantidade de livros: " + livros.size());
-	}
+	
 	
 	
 	static void carregar(ArrayList<Livro> livros) throws IOException {
@@ -55,41 +39,6 @@ public class Main {
 
 		reader.close();
 	}
-	
-	static void buscarPorNome(ArrayList<Livro> livros, String busca) {
-
-		System.out.print("Digite o nome ou parte do nome do aluno: ");
-		busca = "hobbit";
-
-		if (livros.isEmpty()) {
-			System.out.println("Nenhum livro cadastrado.");
-		}
-
-		if (busca.isEmpty()) {
-			System.out.println("Digite um título para realizar a busca.");
-		}
-
-		boolean encontrado = false;
-
-		for (Livro livro : livros) {
-
-			if (livro.getTitulo().toLowerCase().contains(busca.toLowerCase())) {
-
-				System.out.println("\nTítulo: " + livro.getTitulo());
-				System.out.println("\nAutor: " + livro.getAutor());
-				System.out.println("\nGênero: " + livro.getGenero());
-				System.out.println("\nAno: " + livro.getAno());
-				System.out.printf("\nEdição: %.1f%n", livro.getEdicao());
-
-				encontrado = true;
-			}
-
-			if (!encontrado) {
-				System.out.println("Nenhum aluno encontrado.");
-			}
-		}
-
-	}
 
 	static void mostrarArquivo() throws IOException {
 
@@ -103,17 +52,58 @@ public class Main {
 	
 	public static void main(String[] args) throws IOException {
 		ArrayList<Livro> livros = new ArrayList<>();
-
-		//int opcao = -1;
+		
+		Scanner scanner = new Scanner(System.in).useLocale(Locale.US);
+		int opcao = -1;
 
 		String busca = "hobbit";
 		
-		livros.add(new Livro("O Hobbit: A Sociedade do Anel", "J.R.R. Tolkien", "Fantasia", 1954, 1));
-		livros.add(new Livro("O Diário de Anne Frank", "Anne Frank", "Biografia", 1945, 1));
+		//livros.add(new Livro("O Hobbit: A Sociedade do Anel", "J.R.R. Tolkien", "Fantasia", 1954, 1));
+		//livros.add(new Livro("O Diário de Anne Frank", "Anne Frank", "Biografia", 1945, 1));
 
+		do {
+			System.out.println("SISTEMA DE CONTROLE DE TURMA");
+			System.out.println("1 - Cadastrar livro");
+			System.out.println("2 - Pesquisar livro");
+			System.out.println("3 - Efetuar empréstimo");
+			System.out.println("4 - Listar empréstimos");
+			System.out.println("5 - Cadastrar bibliotecário");
+			System.out.println("6 - Consultar bibliotecários");
+			System.out.println("7 - Salvar relatório em arquivo");
+			System.out.println("0 - Sair do sistema");
+			opcao = scanner.nextInt();
+			
+			switch (opcao) {
+			case 0:
+				System.out.println("Encerrando programa...");
+				break;
+			case 1:
+				carregar(livros);
+				Livro.cadastrar(scanner,livros);
+				break;
+			case 2:
+				Livro.pesquisar(livros, busca);
+				break;
+			/*case 3:
+				Aluno.buscarPorNome(scanner, alunos);
+				break;
+			case 4:
+				Aluno.mostrarNotasOrdenadas(scanner, alunos);
+				break;
+			case 5:
+				Aluno.mostrarEstatisticas(alunos);
+				break;
+			case 6:
+				Aluno.filtrarPorSituacao(scanner, alunos);
+				break;*/
+			default:
+				System.out.println("Opcao invalida \n");
+			}
+		} while (opcao != 0);
+		
 		carregar(livros);
-		salvar(livros);
-		buscarPorNome(livros, busca);
+		Livro.salvar(livros);
+		//Livro.pesquisar(livros, busca);
 		mostrarArquivo();
 	}
 
