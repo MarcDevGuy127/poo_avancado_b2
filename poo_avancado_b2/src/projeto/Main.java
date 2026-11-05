@@ -1,110 +1,108 @@
 package projeto;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Scanner;
 
 public class Main {
 
-	
-	
-	
-	static void carregar(ArrayList<Livro> livros) throws IOException {
+    static void carregar(ArrayList<Livro> livros) throws IOException {
+        livros.clear();
+        File arquivo = new File("livros.txt");
+        
+        if (!arquivo.exists()) {
+            return;
+        }
 
-		livros.clear();
+        // Lê o arquivo forçando a codificação UTF-8
+        BufferedReader reader = new BufferedReader(new InputStreamReader(new FileInputStream(arquivo), StandardCharsets.UTF_8));
+        String linha;
 
-		BufferedReader reader = new BufferedReader(new FileReader("livros.txt"));
+        while ((linha = reader.readLine()) != null) {
+            String[] separador = linha.split(";");
+            
+            if (separador.length >= 5) {
+                Livro livro = new Livro(
+                    separador[0],
+                    separador[1],
+                    separador[2],
+                    Integer.parseInt(separador[3]),
+                    Integer.parseInt(separador[4])
+                );
+                livros.add(livro);
+            }
+        }
+        reader.close();
+    }
 
-		String linha;
+    public static void main(String[] args) throws IOException {
+        ArrayList<Livro> livros = new ArrayList<>();
+        carregar(livros);
 
-		while ((linha = reader.readLine()) != null) {
-			String[] separador = linha.split(";");
+        // CORREÇÃO CRUCIAL: Força o Scanner a ler o teclado em UTF-8
+        Scanner scanner = new Scanner(System.in, StandardCharsets.UTF_8);
+        scanner.useLocale(Locale.US);
+        int opcao = -1;
 
-			for (String parte : separador) {
-				if (!parte.isEmpty()) {
-					System.out.println(parte);
-				}
-			}
-			
-			Livro livro = new Livro(
-					separador[0],
-					separador[1],
-					separador[2],
-					Integer.parseInt(separador[3]),
-					Integer.parseInt(separador[4]));
-		}
+        do {
+            System.out.println("\nSISTEMA DE CONTROLE DE TURMA");
+            System.out.println("1 - Cadastrar livro");
+            System.out.println("2 - Pesquisar livro");
+            System.out.println("3 - Efetuar emprestimo");
+            System.out.println("4 - Listar emprestimos");
+            System.out.println("5 - Cadastrar bibliotecario");
+            System.out.println("6 - Consultar bibliotecarios");
+            System.out.println("7 - Salvar relatorio em arquivo");
+            System.out.println("0 - Sair do sistema");
+            System.out.print("Escolha uma opcao: ");
 
-		reader.close();
-	}
+            if (scanner.hasNextInt()) {
+                opcao = scanner.nextInt();
+                scanner.nextLine(); // Limpa o buffer do enter
 
-	static void mostrarArquivo() throws IOException {
+                switch (opcao) {
+                    case 1:
+                        Livro.cadastrar(scanner, livros);
+                        Livro.salvar(livros);
+                        break;
+                    case 2:
+                        Livro.pesquisar(livros, "");
+                        break;
+                    case 3:
+                        System.out.println("\n--- Efetuar Empréstimo ---");
+                        break;
+                    case 4:
+                        System.out.println("\n--- Listar Empréstimos ---");
+                        break;
+                    case 5:
+                        Bibliotecario.cadastrar(scanner, null); // Ajuste conforme sua lista de bibliotecários se necessário
+                        break;
+                    case 6:
+                        Bibliotecario.consultar(null);
+                        break;
+                    case 7:
+                        System.out.println("\n--- Salvar Relatório ---");
+                        Livro.salvar(livros);
+                        break;
+                    case 0:
+                        System.out.println("\nA sair do sistema...");
+                        break;
+                    default:
+                        System.out.println("\nOpcao invalida! Escolha um numero entre 0 e 7.");
+                }
+            } else {
+                System.out.println("\nPor favor, digite um numero valido.");
+                scanner.next(); // Descarta entrada inválida
+            }
 
-		BufferedReader reader = new BufferedReader(new FileReader("livros.txt"));
-		String linha;
-		while ((linha = reader.readLine()) != null) {
-			System.out.println(linha);
-		}
-		reader.close();
-	}
-	
-	public static void main(String[] args) throws IOException {
-		ArrayList<Livro> livros = new ArrayList<>();
-		
-		Scanner scanner = new Scanner(System.in).useLocale(Locale.US);
-		int opcao = -1;
+        } while (opcao != 0);
 
-		String busca = "hobbit";
-		
-		//livros.add(new Livro("O Hobbit: A Sociedade do Anel", "J.R.R. Tolkien", "Fantasia", 1954, 1));
-		//livros.add(new Livro("O Diário de Anne Frank", "Anne Frank", "Biografia", 1945, 1));
-
-		do {
-			System.out.println("SISTEMA DE CONTROLE DE TURMA");
-			System.out.println("1 - Cadastrar livro");
-			System.out.println("2 - Pesquisar livro");
-			System.out.println("3 - Efetuar empréstimo");
-			System.out.println("4 - Listar empréstimos");
-			System.out.println("5 - Cadastrar bibliotecário");
-			System.out.println("6 - Consultar bibliotecários");
-			System.out.println("7 - Salvar relatório em arquivo");
-			System.out.println("0 - Sair do sistema");
-			opcao = scanner.nextInt();
-			
-			switch (opcao) {
-			case 0:
-				System.out.println("Encerrando programa...");
-				break;
-			case 1:
-				carregar(livros);
-				Livro.cadastrar(scanner,livros);
-				break;
-			case 2:
-				Livro.pesquisar(livros, busca);
-				break;
-			/*case 3:
-				Aluno.buscarPorNome(scanner, alunos);
-				break;
-			case 4:
-				Aluno.mostrarNotasOrdenadas(scanner, alunos);
-				break;
-			case 5:
-				Aluno.mostrarEstatisticas(alunos);
-				break;
-			case 6:
-				Aluno.filtrarPorSituacao(scanner, alunos);
-				break;*/
-			default:
-				System.out.println("Opcao invalida \n");
-			}
-		} while (opcao != 0);
-		
-		carregar(livros);
-		Livro.salvar(livros);
-		//Livro.pesquisar(livros, busca);
-		mostrarArquivo();
-	}
-
+        scanner.close();
+    }
 }
