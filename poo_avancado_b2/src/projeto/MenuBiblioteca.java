@@ -119,9 +119,9 @@ public class MenuBiblioteca extends JFrame {
         });
 
         btnCadastrarBibliotecario.addActionListener(e -> {
-            cadastrarBibliotecario();
+            new BibliotecarioView(new ArrayList<>()).setVisible(true);
         });
-
+        
         btnConsultarBibliotecarios.addActionListener(e -> {
             Bibliotecario.consultar(new ArrayList<>());
         });
