@@ -1,35 +1,45 @@
 package projeto;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.util.ArrayList;
 
 public class Biblioteca {
-	private ArrayList<Aluno> aluno;
-	private ArrayList<Bibliotecario> bibliotecario;
-	private ArrayList<Livro> livro;
-	
-	
-	public Biblioteca(ArrayList<Aluno> aluno, ArrayList<Bibliotecario> bibliotecario, ArrayList<Livro> livro) {
-		this.aluno = aluno;
-		this.bibliotecario = bibliotecario;
-		this.livro = livro;
-	}
-	
-	
+    private ArrayList<Aluno> aluno;
+    private ArrayList<Bibliotecario> bibliotecario;
+    private ArrayList<Livro> livro;
 
-	public ArrayList<Aluno> getAluno() {
-		return aluno;
-	}
+    public Biblioteca() {
+        this.aluno = new ArrayList<>();
+        this.bibliotecario = new ArrayList<>();
+        this.livro = new ArrayList<>();
+    }
 
-	public ArrayList<Bibliotecario> getBibliotecario() {
-		return bibliotecario;
-	}
+    public Biblioteca(ArrayList<Aluno> aluno, ArrayList<Bibliotecario> bibliotecario, ArrayList<Livro> livro) {
+        this.aluno = aluno != null ? aluno : new ArrayList<>();
+        this.bibliotecario = bibliotecario != null ? bibliotecario : new ArrayList<>();
+        this.livro = livro != null ? livro : new ArrayList<>();
+    }
 
-	public ArrayList<Livro> getLivro() {
-		return livro;
-	}
-	
+    public ArrayList<Aluno> getAluno() {
+        return aluno;
+    }
+
+    public void setAluno(ArrayList<Aluno> aluno) {
+        this.aluno = aluno != null ? aluno : new ArrayList<>();
+    }
+
+    public ArrayList<Bibliotecario> getBibliotecario() {
+        return bibliotecario;
+    }
+
+    public void setBibliotecario(ArrayList<Bibliotecario> bibliotecario) {
+        this.bibliotecario = bibliotecario != null ? bibliotecario : new ArrayList<>();
+    }
+
+    public ArrayList<Livro> getLivro() {
+        return livro;
+    }
+
+    public void setLivro(ArrayList<Livro> livro) {
+        this.livro = livro != null ? livro : new ArrayList<>();
+    }
 }

@@ -1,0 +1,5 @@
+Dom Casmurro;Machado de Assis;Romance;2020;1
+O alienista;Machado de assis;Conto;1882;2
+O Senhor dos Aneis A Socidade do Anel;Tolkien J.J;Fantasia;1943;1
+Harry Potter Calice de Fogo;J.K Rowling;Fantasia;1999;1
+Harry Potter Ordem da Fenix;J.K Rowling;Fantasia;2000;1

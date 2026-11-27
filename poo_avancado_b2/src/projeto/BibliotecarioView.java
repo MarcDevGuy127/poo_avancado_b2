@@ -1,116 +1,121 @@
 package projeto;
 
-import java.awt.*;
+import java.awt.BorderLayout;
+import java.awt.FlowLayout;
+import java.awt.Font;
+import java.awt.GridLayout;
 import java.util.ArrayList;
-import javax.swing.*;
+import javax.swing.BorderFactory;
+import javax.swing.JButton;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import javax.swing.UIManager;
 
 public class BibliotecarioView extends JFrame {
 
-	/**
-	 * Classe BibliotecarioView
-	 */
-	private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = 1L;
 
-	private ArrayList<Bibliotecario> bibliotecarios;
-	private JTextField nomeBibliotecario;
-	
-	// normalizando texto
-	static String normalizarTexto(String string) {
-		if (string == null) {
-			return "";
-		}
-		string = string.trim();
-		if (string.isEmpty()) {
-			System.out.println("O campo não pode ficar vazio.");
-			return string;
-		} else {
-			return string.substring(0, 1).toUpperCase() + string.substring(1);
-		}
-	}
-	
-	// construtor da classe
-	public BibliotecarioView(ArrayList<Bibliotecario> bibliotecarios) {
-		this.bibliotecarios = bibliotecarios;
+    private final ArrayList<Bibliotecario> bibliotecarios;
+    private final BibliotecarioService bibliotecarioService;
+    private final JTextField nomeBibliotecario;
 
-	    setTitle("Cadastro de Bibliotecario");
-		setSize(450, 350);
-		setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		setLocationRelativeTo(null);
+    public BibliotecarioView(ArrayList<Bibliotecario> bibliotecarios) {
+        this(bibliotecarios, new BibliotecarioService());
+    }
 
-		// Painel principal
-		JPanel painel = new JPanel(new BorderLayout(10, 15));
+    public BibliotecarioView(ArrayList<Bibliotecario> bibliotecarios, BibliotecarioService bibliotecarioService) {
+        UIManager.put("Button.focusPainted", Boolean.FALSE);
 
-		painel.setBorder(BorderFactory.createEmptyBorder(20, 25, 20, 25));
+        this.bibliotecarios = bibliotecarios != null ? bibliotecarios : new ArrayList<>();
+        this.bibliotecarioService = bibliotecarioService != null ? bibliotecarioService : new BibliotecarioService();
 
-		// Cabeçalho
-		JLabel titulo = new JLabel("CADASTRO DE BIBLIOTECÁRIO", SwingConstants.CENTER);
+        setTitle("Cadastro de Bibliotecário");
+        setSize(450, 260);
+        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setLocationRelativeTo(null);
 
-		titulo.setFont(new Font("Arial", Font.BOLD, 20));
+        // Painel principal
+        JPanel painel = new JPanel(new BorderLayout(10, 15));
+        painel.setBorder(BorderFactory.createEmptyBorder(20, 25, 20, 25));
 
-		painel.add(titulo, BorderLayout.NORTH);
+        // Cabeçalho
+        JLabel titulo = new JLabel("CADASTRO DE BIBLIOTECÁRIO", SwingConstants.CENTER);
+        titulo.setFont(new Font("Arial", Font.BOLD, 18));
+        painel.add(titulo, BorderLayout.NORTH);
 
-		// Painel dos campos
-		JPanel campos = new JPanel(new GridLayout(1, 2, 10, 15));
+        // Painel dos campos
+        JPanel wrapperCampos = new JPanel(new BorderLayout());
+        JPanel campos = new JPanel(new GridLayout(1, 2, 10, 10));
+        campos.add(new JLabel("Nome Completo:"));
 
-		campos.add(new JLabel("Nome Completo:"));
-		
-		nomeBibliotecario = new JTextField();
-		campos.add(nomeBibliotecario);
+        nomeBibliotecario = new JTextField();
+        campos.add(nomeBibliotecario);
 
-		
-		painel.add(campos, BorderLayout.CENTER);
-		
-		// Painel dos botões
-        JPanel botoes = new JPanel(new FlowLayout());
+        wrapperCampos.add(campos, BorderLayout.NORTH);
+        painel.add(wrapperCampos, BorderLayout.CENTER);
 
-        JButton btnCadastrar = new JButton("Cadastrar");
-        JButton btnLimpar = new JButton("Limpar");
+        // Painel dos botões
+        JPanel botoes = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
+        JButton btnLimpar = criarBotao("Limpar");
+        JButton btnCadastrar = criarBotao("Cadastrar");
 
-        botoes.add(btnCadastrar);
         botoes.add(btnLimpar);
-
+        botoes.add(btnCadastrar);
         painel.add(botoes, BorderLayout.SOUTH);
 
-		// Evento cadastrar
-		btnCadastrar.addActionListener(e -> cadastrar());
+        // Eventos
+        btnCadastrar.addActionListener(e -> cadastrar());
+        btnLimpar.addActionListener(e -> limparCampos());
 
-		// Evento limpar
-		btnLimpar.addActionListener(e -> limparCampos());
+        add(painel);
+    }
 
-		add(painel);
-	}
+    private JButton criarBotao(String texto) {
+        JButton botao = new JButton(texto);
+        botao.setFocusPainted(false);
+        return botao;
+    }
 
-	private void cadastrar() {
+    private void cadastrar() {
+        String nome = nomeBibliotecario.getText();
 
-		String nome = nomeBibliotecario.getText().trim();
+        if (nome == null || nome.trim().isEmpty()) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Preencha todos os campos!",
+                    "Atenção",
+                    JOptionPane.WARNING_MESSAGE
+            );
+            nomeBibliotecario.requestFocus();
+            return;
+        }
 
-		// Validação dos campos vazios
-		if (nome.isEmpty()) {
+        try {
+            Bibliotecario novoBibliotecario = bibliotecarioService.cadastrarBibliotecario(bibliotecarios, nome);
+            JOptionPane.showMessageDialog(
+                    this,
+                    "Bibliotecário \"" + novoBibliotecario.getNome() + "\" cadastrado com sucesso!",
+                    "Sucesso",
+                    JOptionPane.INFORMATION_MESSAGE
+            );
+            limparCampos();
+            dispose();
+        } catch (IllegalArgumentException ex) {
+            JOptionPane.showMessageDialog(
+                    this,
+                    ex.getMessage(),
+                    "Atenção",
+                    JOptionPane.WARNING_MESSAGE
+            );
+        }
+    }
 
-			JOptionPane.showMessageDialog(
-					this, 
-					"Preencha todos os campos!", 
-					"Atenção", 
-					JOptionPane.WARNING_MESSAGE);
-
-			return;
-		}
-
-		// Normalização dos textos
-		nome = normalizarTexto(nome);
-
-		// Instanciação do objeto
-		Bibliotecario novoBibliotecario = new Bibliotecario(nome);
-
-		// Adiciona à lista
-		bibliotecarios.add(novoBibliotecario);
-
-	}
-
-	private void limparCampos() {
-
-		nomeBibliotecario.setText("");
-		nomeBibliotecario.requestFocus();
-	}
-
+    private void limparCampos() {
+        nomeBibliotecario.setText("");
+        nomeBibliotecario.requestFocus();
+    }
 }

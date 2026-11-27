@@ -1,41 +1,42 @@
 package projeto;
 
-import java.util.ArrayList;
-import java.util.Scanner;
-
 public class Bibliotecario {
-    public String nome;
+    private Integer id;
+    private String nome;
 
-    // Construtor
+    public Bibliotecario() {
+    }
+
     public Bibliotecario(String nome) {
         this.nome = nome;
     }
 
-    // Método estático para cadastrar um novo bibliotecário
-    public static void cadastrar(Scanner scanner, ArrayList<Bibliotecario> bibliotecarios) {
-        System.out.print("Digite o nome do bibliotecário: ");
-        String nome = scanner.nextLine();
-
-        if (nome == null || nome.trim().isEmpty()) {
-            System.out.println("Nome inválido! Cadastro não realizado.\n");
-            return;
-        }
-
-        bibliotecarios.add(new Bibliotecario(nome));
-        System.out.println("Bibliotecário cadastrado com sucesso!\n");
+    public Bibliotecario(Integer id, String nome) {
+        this.id = id;
+        this.nome = nome;
     }
 
-    // Método estático para consultar os bibliotecários cadastrados
-    public static void consultar(ArrayList<Bibliotecario> bibliotecarios) {
-        if (bibliotecarios.isEmpty()) {
-            System.out.println("Nenhum bibliotecário cadastrado no sistema.\n");
-            return;
-        }
+    public Integer getId() {
+        return id;
+    }
 
-        System.out.println("--- LISTA DE BIBLIOTECÁRIOS ---");
-        for (int i = 0; i < bibliotecarios.size(); i++) {
-            System.out.println((i + 1) + " - Nome: " + bibliotecarios.get(i).nome);
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
+    @Override
+    public String toString() {
+        if (id != null) {
+            return "ID: " + id + " | Nome: " + nome;
         }
-        System.out.println();
+        return "Nome: " + nome;
     }
 }
